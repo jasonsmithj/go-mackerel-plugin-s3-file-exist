@@ -56,7 +56,7 @@ func (s S3Plugin) FetchMetrics() (map[string]float64, error) {
 		t := time.Now()
 		// TODO: この条件は直したい。
 		if 3 > t.Hour() {
-			return map[string]float64{"count": float64(1.0)}, nil
+			return map[string]float64{"exist": float64(1.0)}, nil
 		}
 		t = t.Add(-time.Duration(24) * time.Hour)
 		const layout = "2006-01-02"
