@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	mp "github.com/mackerelio/go-mackerel-plugin"
-	"gopkg.in/validator.v2"
 	"log"
 	"strings"
 	"time"
@@ -37,7 +36,7 @@ func (s S3Plugin) GraphDefinition() map[string]mp.Graphs {
 			Label: labelPrefix,
 			Unit:  mp.UnitFloat,
 			Metrics: []mp.Metrics{
-				{Name: "fileExist", Label: "FileExist"},
+				{Name: "exist", Label: "FileExist"},
 			},
 		},
 	}
@@ -77,13 +76,13 @@ func (s S3Plugin) FetchMetrics() (map[string]float64, error) {
 			if result.count != 0 {
 				result.size = *res.Contents[0].Size
 				if result.size == 0 {
-					fileResults = 0.0
+					fileResults = float64(result.count)
 					break
 				} else {
-					fileResults = 1.0
+					fileResults = float64(result.count)
 				}
 			} else {
-				fileResults = 0.0
+				fileResults = float64(result.count)
 				break
 			}
 		}
@@ -101,15 +100,15 @@ func (s S3Plugin) FetchMetrics() (map[string]float64, error) {
 		if result.count != 0 {
 			result.size = *res.Contents[0].Size
 			if result.size == 0 {
-				fileResults = 0.0
+				fileResults = float64(result.count)
 			} else {
-				fileResults = 1.0
+				fileResults = float64(result.count)
 			}
 		} else {
-			fileResults = 0.0
+			fileResults = float64(result.count)
 		}
 	}
-	return map[string]float64{"exist": float64(fileResults)}, nil
+	return map[string]float64{"exist": fileResults}, nil
 
 }
 
@@ -141,11 +140,6 @@ func main() {
 	s3.region = *optRegion
 	s3.bucket = *optBucket
 	s3.embulk = *optEmbulk
-
-	// TODO: 実際は実装できてない。
-	if err := validator.Validate(s3); err != nil {
-		log.Fatalln("validation error: ", err)
-	}
 
 	helper := mp.NewMackerelPlugin(s3)
 	helper.Tempfile = *optTempfile
