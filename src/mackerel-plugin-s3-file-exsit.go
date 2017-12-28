@@ -76,7 +76,7 @@ func (s S3Plugin) FetchMetrics() (map[string]float64, error) {
 			if result.count != 0 {
 				result.size = *res.Contents[0].Size
 				if result.size == 0 {
-					fileResults = float64(result.count)
+					fileResults = float64(result.size)
 					break
 				} else {
 					fileResults = float64(result.count)
@@ -100,7 +100,7 @@ func (s S3Plugin) FetchMetrics() (map[string]float64, error) {
 		if result.count != 0 {
 			result.size = *res.Contents[0].Size
 			if result.size == 0 {
-				fileResults = float64(result.count)
+				fileResults = float64(result.size)
 			} else {
 				fileResults = float64(result.count)
 			}
